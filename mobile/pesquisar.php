@@ -1,0 +1,53 @@
+<?php 
+	include("header.php");
+?>
+
+
+<html>
+	<header>
+		<style type="text/css">
+			h3{text-align: center;font-size: 32px;color: #666;}
+			h2{text-align: center;font-size: 46px;color: #666;}
+			p[name="p"]{display: block;margin: auto;font-size: 20px;text-align: center;color: #FFF;max-width: 700px;}
+			a[name="p"]{color: #1111111; text-decoration: none;}
+			hr{border: 1px solid #666;width: 500px;display: block;margin: auto;}
+			
+		</style>
+	</header>
+<body>
+	<br/>
+	<h2>Pesquisar!</h2>
+	<?php
+		if isset($_GET['query']){
+			$query = $_GET['query'];
+
+			$min_length = 3;
+
+			if(strlen($query) >= $min_length){
+				$query = htmlspecialchars($query);
+
+				$query = mysqli_real_escape_string($connect,$query);
+
+				$raw_results = mysqli_query($connect, "SELECT * FROM users WHERE nome LIKE '%".$query."%'")or die(mysqli_error($connect));
+
+				if (mysqli_num_rows($raw_results)>0){
+					echo "<br/><br/>";
+					while($results = mysqli_fetch_array($raw_results)){
+						echo '<a href="profile.php?id='.$results["id"].'" name="p"><br/><p name="p"><h3>'.$results["nome"].' '.$results["apelido"].'</h3></p><br/></a><br/><hr/><br/>';
+					}
+				}else{
+					echo "<br/><h3>Nada foi encontrado, tente novamente com outro nome.</h3>";
+				}
+
+			}else{
+				echo "<br/><br/><br/><br/>
+					<form class='form-inline my-2 my-lg-0'  method='GET' action='pesquisar.php' id='pesquisar'>
+					  <input class='form-control mr-sm-2' type='text' placeholder='Procurar Pessoas...' name='query' autocomplete='off'>
+					  <button class='btn btn-outline-success my-2 my-sm-0' type='submit'>Pesquisar</button>
+					</form>
+				";
+			}
+		}
+	?>
+</body>
+</html>
